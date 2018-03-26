@@ -6,6 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
+# matlab
+*.mat 
+
+# graphs
+graphs/
+
 # Distribution / packaging
 .Python
 env/

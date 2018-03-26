@@ -9,6 +9,11 @@ Helper libraries for analysing a tensorflow network
 """
 
 import tensorflow as tf
+import os
+modelParamsFolder = "model_params_analysis"
+
+if not os.path.exists(modelParamsFolder):
+    os.makedirs(modelParamsFolder)
 
 def convertTensorNameAndShapeToText(inTensor):
     outStr = inTensor.name+','
@@ -16,41 +21,45 @@ def convertTensorNameAndShapeToText(inTensor):
     # get the tensor shape
     tShape = inTensor.shape
     
+    mulVal = 1 # container for parameters multiplier value
+    
     # iterate through the shape and add them to the outStr
     for i in range(len(tShape)):
         cVal = tShape[i].value
         
         # check for None and replace with -1
         if cVal is None:
-            cVal = -1
+            cVal = 1
         
         #print(cVal)
         outStr += str(cVal)
-        
+        mulVal *= cVal
         # check if not the last element - if not then add a ,
-        if(i != len(tShape)-1):
-            outStr += ','
-    print(outStr)
+#        if(i != len(tShape)-1):
+        outStr += ','
+#    print(outStr)
+    outStr += str(mulVal)
     return outStr
 
 def convertEndpointNameAndShapeToText(inName, inShape):
     outStr = inName+','
-       
+    mulVal = 1 # container for parameters multiplier value
     # iterate through the shape and add them to the outStr
     for i in range(len(inShape)):
         cVal = inShape[i]
         
         # check for None and replace with -1
         if cVal is None:
-            cVal = -1
+            cVal = 1
         
         #print(cVal)
         outStr += str(cVal)
-        
+        mulVal *= cVal
         # check if not the last element - if not then add a ,
-        if(i != len(inShape)-1):
-            outStr += ','
-    print(outStr)
+#        if(i != len(inShape)-1):
+        outStr += ','
+#    print(outStr)
+    outStr += str(mulVal)
     return outStr
 
 # Help regarding tf.GraphKeys
@@ -59,11 +68,12 @@ def convertEndpointNameAndShapeToText(inName, inShape):
 # save list of trainable parameters to a CSV file
 def createCSVTrainParamsFromGraph(networkName):    
     networkParamsList = list()
-    for variable in tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES ):
+#    for variable in tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES):
+    for variable in tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES):
         tempStr = convertTensorNameAndShapeToText(variable)
         networkParamsList.append(tempStr)
     
-    fileName = networkName + '_Trainable' + '.csv'
+    fileName = os.path.join(modelParamsFolder, networkName + '_Trainable' + '.csv')
     with open(fileName, 'w') as f:
         f.write("Model: " + networkName + "\n")
         for item in networkParamsList:
@@ -78,7 +88,7 @@ def createCSVModelParamsFromEndpoints(networkName, end_points):
         networkParamsList.append(tempStr)
 #        print(variable)
     
-    fileName = networkName + '_Model' + '.csv'
+    fileName = os.path.join(modelParamsFolder, networkName + '_Endpoints' + '.csv')
     with open(fileName, 'w') as f:
         f.write("Model: " + networkName + "\n")
         for item in networkParamsList:
