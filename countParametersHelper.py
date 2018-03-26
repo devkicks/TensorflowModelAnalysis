@@ -65,7 +65,7 @@ def createCSVTrainParamsFromGraph(networkName):
     
     fileName = networkName + '_Trainable' + '.csv'
     with open(fileName, 'w') as f:
-        f.write("Model: " + networkName)
+        f.write("Model: " + networkName + "\n")
         for item in networkParamsList:
             f.write("%s\n" % item)           
             
@@ -80,7 +80,7 @@ def createCSVModelParamsFromEndpoints(networkName, end_points):
     
     fileName = networkName + '_Model' + '.csv'
     with open(fileName, 'w') as f:
-        f.write("Model: " + networkName)
+        f.write("Model: " + networkName + "\n")
         for item in networkParamsList:
             f.write("%s\n" % item)            
 
