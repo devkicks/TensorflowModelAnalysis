@@ -1,0 +1,23 @@
+Model: segnet
+conv1/ort_weights:0,7,7,3,64,9408
+conv1/biases:0,64,64
+conv2/ort_weights:0,7,7,64,64,200704
+conv2/biases:0,64,64
+conv3/ort_weights:0,7,7,64,64,200704
+conv3/biases:0,64,64
+conv4/ort_weights:0,7,7,64,64,200704
+conv4/biases:0,64,64
+up4/up_filter:0,2,2,64,64,16384
+conv_decode4/ort_weights:0,7,7,64,64,200704
+conv_decode4/biases:0,64,64
+up3/up_filter:0,2,2,64,64,16384
+conv_decode3/ort_weights:0,7,7,64,64,200704
+conv_decode3/biases:0,64,64
+up2/up_filter:0,2,2,64,64,16384
+conv_decode2/ort_weights:0,7,7,64,64,200704
+conv_decode2/biases:0,64,64
+up1/up_filter:0,2,2,64,64,16384
+conv_decode1/ort_weights:0,7,7,64,64,200704
+conv_decode1/biases:0,64,64
+conv_classifier/weights:0,1,1,64,12,768
+conv_classifier/biases:0,12,12

@@ -249,60 +249,70 @@ def inference_with_endpoints(images, labels, batch_size, phase_train):
                 name='norm1')
     # conv1
     conv1 = conv_layer_with_bn(norm1, [7, 7, images.get_shape().as_list()[3], 64], phase_train, name="conv1")
-    end_points[conv1.name] = conv1
+    end_points['segnet/conv1'] = conv1
     # pool1
-    pool1, pool1_indices = tf.nn.max_pool_with_argmax(conv1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+#    pool1, pool1_indices = tf.nn.max_pool_with_argmax(conv1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
+#                           padding='SAME', name='pool1')
+    
+    pool1= tf.nn.max_pool(conv1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
                            padding='SAME', name='pool1')
+    
+#    tf.nn.max_pool(value, ksize,  strides,   padding,   data_format='NHWC',   name=None)
+   
     # conv2
     conv2 = conv_layer_with_bn(pool1, [7, 7, 64, 64], phase_train, name="conv2")
-    end_points[conv2.name] = conv2
+    end_points['segnet/conv2'] = conv2
     # pool2
-    pool2, pool2_indices = tf.nn.max_pool_with_argmax(conv2, ksize=[1, 2, 2, 1],
+#    pool2, pool2_indices = tf.nn.max_pool_with_argmax(conv2, ksize=[1, 2, 2, 1],
+#                           strides=[1, 2, 2, 1], padding='SAME', name='pool2')
+    pool2 = tf.nn.max_pool(conv2, ksize=[1, 2, 2, 1],
                            strides=[1, 2, 2, 1], padding='SAME', name='pool2')
     # conv3
     conv3 = conv_layer_with_bn(pool2, [7, 7, 64, 64], phase_train, name="conv3")
-    end_points[conv3.name] = conv3
+    end_points['segnet/conv3'] = conv3
     
     # pool3
-    pool3, pool3_indices = tf.nn.max_pool_with_argmax(conv3, ksize=[1, 2, 2, 1],
+#    pool3, pool3_indices = tf.nn.max_pool_with_argmax(conv3, ksize=[1, 2, 2, 1],
+#                           strides=[1, 2, 2, 1], padding='SAME', name='pool3')
+    pool3 = tf.nn.max_pool(conv3, ksize=[1, 2, 2, 1],
                            strides=[1, 2, 2, 1], padding='SAME', name='pool3')
-    
     # conv4
     conv4 = conv_layer_with_bn(pool3, [7, 7, 64, 64], phase_train, name="conv4")
-    end_points[conv4.name] = conv4
+    end_points['segnet/conv4'] = conv4
     
     # pool4
-    pool4, pool4_indices = tf.nn.max_pool_with_argmax(conv4, ksize=[1, 2, 2, 1],
+#    pool4, pool4_indices = tf.nn.max_pool_with_argmax(conv4, ksize=[1, 2, 2, 1],
+#                           strides=[1, 2, 2, 1], padding='SAME', name='pool4')
+    pool4 = tf.nn.max_pool(conv4, ksize=[1, 2, 2, 1],
                            strides=[1, 2, 2, 1], padding='SAME', name='pool4')
-
     """ End of encoder """
     """ start upsample """
     # upsample4
     # Need to change when using different dataset out_w, out_h
     # upsample4 = upsample_with_pool_indices(pool4, pool4_indices, pool4.get_shape(), out_w=45, out_h=60, scale=2, name='upsample4')
-    upsample4 = deconv_layer(pool4, [2, 2, 64, 64], [batch_size, 45, 60, 64], 2, "up4")
+    upsample4 = deconv_layer(pool4, [2, 2, 64, 64], [batch_size, 64, 64, 64], 2, "up4")
     # decode 4
     conv_decode4 = conv_layer_with_bn(upsample4, [7, 7, 64, 64], phase_train, False, name="conv_decode4")
-    end_points[conv_decode4.name] = conv_decode4
+    end_points['segnet/conv_decode4'] = conv_decode4
     # upsample 3
     # upsample3 = upsample_with_pool_indices(conv_decode4, pool3_indices, conv_decode4.get_shape(), scale=2, name='upsample3')
-    upsample3= deconv_layer(conv_decode4, [2, 2, 64, 64], [batch_size, 90, 120, 64], 2, "up3")
+    upsample3= deconv_layer(conv_decode4, [2, 2, 64, 64], [batch_size, 128, 128, 64], 2, "up3")
     # decode 3
     conv_decode3 = conv_layer_with_bn(upsample3, [7, 7, 64, 64], phase_train, False, name="conv_decode3")
-    end_points[conv_decode3.name] = conv_decode3
+    end_points['segnet/conv_decode3'] = conv_decode3
     # upsample2
     # upsample2 = upsample_with_pool_indices(conv_decode3, pool2_indices, conv_decode3.get_shape(), scale=2, name='upsample2')
-    upsample2= deconv_layer(conv_decode3, [2, 2, 64, 64], [batch_size, 180, 240, 64], 2, "up2")
+    upsample2= deconv_layer(conv_decode3, [2, 2, 64, 64], [batch_size, 256, 256, 64], 2, "up2")
     
     # decode 2
     conv_decode2 = conv_layer_with_bn(upsample2, [7, 7, 64, 64], phase_train, False, name="conv_decode2")
-    end_points[conv_decode2.name] = conv_decode2
+    end_points['segnet/conv_decode2'] = conv_decode2
     # upsample1
     # upsample1 = upsample_with_pool_indices(conv_decode2, pool1_indices, conv_decode2.get_shape(), scale=2, name='upsample1')
-    upsample1= deconv_layer(conv_decode2, [2, 2, 64, 64], [batch_size, 360, 480, 64], 2, "up1")
+    upsample1= deconv_layer(conv_decode2, [2, 2, 64, 64], [batch_size, 512, 512, 64], 2, "up1")
     # decode4
     conv_decode1 = conv_layer_with_bn(upsample1, [7, 7, 64, 64], phase_train, False, name="conv_decode1")
-    end_points[conv_decode1.name] = conv_decode1
+    end_points['segnet/conv_decode1'] = conv_decode1
     """ end of Decode """
     """ Start Classify """
     # output predicted class number (6)
@@ -312,13 +322,13 @@ def inference_with_endpoints(images, labels, batch_size, phase_train):
                                            initializer=msra_initializer(1, 64),
                                            wd=0.0005)
       conv = tf.nn.conv2d(conv_decode1, kernel, [1, 1, 1, 1], padding='SAME')
-      end_points[conv.name] = conv
+      end_points['segnet/conv_classifier'] = conv
       biases = _variable_on_cpu('biases', [NUM_CLASSES], tf.constant_initializer(0.0))
       conv_classifier = tf.nn.bias_add(conv, biases, name=scope.name)
 
     logit = conv_classifier
-    end_points[logit.name] = logit
-    loss = cal_loss(conv_classifier, labels)
+    end_points['segnet/logits'] = logit
+#    loss = cal_loss(conv_classifier, labels)
 
     return logit, end_points
 

@@ -12,7 +12,7 @@ import numpy as np
 from countParametersHelper import *
 import os
 
-import model
+from model import *
 
 tf.reset_default_graph()
 
@@ -34,5 +34,5 @@ sess.run(init)
 im = np.zeros((1, 512, 512, 3))
 
 createCSVTrainParamsFromGraph(modelName)
-ep = sess.run(end_points, feed_dict={x: im})
+ep = sess.run(end_points, feed_dict={x: im, phase_train: True})
 createCSVModelParamsFromEndpoints(modelName, ep)

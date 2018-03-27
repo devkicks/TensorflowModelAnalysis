@@ -1,0 +1,11 @@
+Model: segnet
+segnet/conv1,1,512,512,64,16777216
+segnet/conv_decode3,1,128,128,64,1048576
+segnet/conv3,1,128,128,64,1048576
+segnet/conv4,1,64,64,64,262144
+segnet/conv_decode1,1,512,512,64,16777216
+segnet/conv_decode2,1,256,256,64,4194304
+segnet/conv2,1,256,256,64,4194304
+segnet/conv_classifier,1,512,512,12,3145728
+segnet/conv_decode4,1,64,64,64,262144
+segnet/logits,1,512,512,12,3145728
