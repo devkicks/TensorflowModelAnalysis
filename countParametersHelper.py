@@ -62,6 +62,37 @@ def convertEndpointNameAndShapeToText(inName, inShape):
     outStr += str(mulVal)
     return outStr
 
+## save list of trainable parameters to a CSV file
+## function using sess.graph._nodes_by_name.keys() and 
+## sess.graph.get_tensor_by_name(name)
+#def createCSVTrainParamsFromGraph(networkName, sess):    
+#    networkParamsList = list()
+#    networkParamsEndpoint = list()
+#    
+#    names =[n.name for n in tf.get_default_graph().as_graph_def().node]
+#    
+##    for variable in tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES):
+#    for variable in tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES):
+#        
+#        tempStr = convertTensorNameAndShapeToText(variable)
+#        networkParamsList.append(tempStr)
+#        print(tempStr)
+#        tempTensor = sess.graph.get_tensor_by_name(variable.name)
+#        
+##        sess = tf.get_default_session()
+#        tempNumpy = tempTensor.eval(session=sess)
+#        
+#        tempStr = convertEndpointNameAndShapeToText(variable.name, tempNumpy.shape)
+#        networkParamsEndpoint.append(tempStr)
+#        print(tempStr)
+#    
+#    fileName = os.path.join(modelParamsFolder, networkName + '_Trainable' + '.csv')
+#    with open(fileName, 'w') as f:
+#        f.write("Model: " + networkName + "\n")
+#        for item in networkParamsList:
+#            f.write("%s\n" % item)           
+#            
+
 # Help regarding tf.GraphKeys
 # https://www.tensorflow.org/api_docs/python/tf/GraphKeys
     
